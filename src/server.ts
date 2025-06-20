@@ -1,11 +1,20 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, {
+  Request,
+  Response,
+  RequestHandler,
+  NextFunction,
+} from 'express';
 import pino from 'pino-http';
 import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
-
 import { getEnvVar } from './utils/getEnvVar.js';
+import { getAllProducts, getProductById } from './services/products.js';
 
 const PORT = getEnvVar('PORT', '3000');
+
+interface ProductParams {
+  productId: string;
+}
 
 export const startServer = () => {
   dotenv.config();
@@ -49,15 +58,39 @@ export const startServer = () => {
     next();
   });
 
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Привіт, світ!');
+  app.get('/products', async (req: Request, res: Response) => {
+    try {
+      const products = await getAllProducts();
+      console.log('Отримані продукти:', products);
+
+      res.status(200).json({
+        data: products,
+      });
+    } catch (error) {
+      console.error('Failed to get products:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   });
 
-  app.use((req: Request, res: Response) => {
-    res.status(404).json({
-      message: 'Not found',
-    });
-  });
+  const getProductHandler: RequestHandler<ProductParams> = async (req, res) => {
+    const { productId } = req.params;
+
+    try {
+      const product = await getProductById(productId);
+
+      if (!product) {
+        res.status(404).json({ message: 'Product not found' });
+        return;
+      }
+
+      res.status(200).json({ data: product });
+    } catch (error) {
+      console.error('Failed to get product:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
+  app.get('/product/:productId', getProductHandler);
 
   app.use(
     (
