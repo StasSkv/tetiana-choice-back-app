@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon",
+    "dev": "NODE_NO_WARNINGS=1 nodemon",
     "lint": "eslint . --ext .ts,.js"
   },
   "keywords": [],
