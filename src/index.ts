@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import pino from 'pino-http';
 import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 const app = express();
@@ -19,7 +20,6 @@ const corsOptions: CorsOptions = {
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void,
   ) => {
-    console.log('Request origin:', origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
