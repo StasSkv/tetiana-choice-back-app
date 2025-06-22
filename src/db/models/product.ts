@@ -50,8 +50,35 @@ const ProductSchema = new Schema<ProductDoc>(
 ProductSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret) => {
-    ret.id = ret._id.toString();
-    delete ret._id;
+    const {
+      _id,
+      name,
+      imgS,
+      imgL,
+      brief,
+      quantity,
+      rating,
+      category,
+      volume,
+      price,
+      appointment,
+      ...rest
+    } = ret;
+
+    return {
+      id: _id.toString(),
+      name,
+      imgS,
+      imgL,
+      brief,
+      quantity,
+      rating,
+      category,
+      volume,
+      price,
+      appointment,
+      ...rest,
+    };
   },
 });
 

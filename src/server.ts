@@ -89,7 +89,7 @@ export const startServer = () => {
     }
   };
 
-  app.get('/product/:productId', getProductHandler);
+  app.get('/products/:productId', getProductHandler);
 
   app.use(
     (
