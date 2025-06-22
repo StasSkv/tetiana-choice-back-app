@@ -9,6 +9,7 @@ import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
 import { getEnvVar } from './utils/getEnvVar.js';
 import { getAllProducts, getProductById } from './services/products.js';
+import path from 'path';
 
 const PORT = getEnvVar('PORT', '3000');
 
@@ -61,8 +62,6 @@ export const startServer = () => {
   app.get('/products', async (req: Request, res: Response) => {
     try {
       const products = await getAllProducts();
-      console.log('Отримані продукти:', products);
-
       res.status(200).json({
         data: products,
       });
@@ -105,6 +104,10 @@ export const startServer = () => {
       });
     },
   );
+
+  app.use('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  });
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
