@@ -105,10 +105,6 @@ export const startServer = () => {
     },
   );
 
-  app.use('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-  });
-
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
