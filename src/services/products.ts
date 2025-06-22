@@ -3,7 +3,7 @@ import { ProductModel } from '../db/models/product.js';
 export const getAllProducts = async () => {
   const products = await ProductModel.find(
     {},
-    'id quantity rating imgS appointment name',
+    'id imgS name brief rating price ',
   ).exec();
   return products;
 };
