@@ -1,4 +1,4 @@
-import { ProductModel } from '../db/models/product.js';
+import { ProductModel } from '../../db/models/product/product.js';
 
 export const getAllProducts = async () => {
   const products = await ProductModel.find(

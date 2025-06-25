@@ -47,45 +47,6 @@ const ProductSchema = new Schema<ProductDoc>(
   },
 );
 
-ProductSchema.set('toJSON', {
-  virtuals: true,
-  transform: (doc, ret) => {
-    const {
-      _id,
-      name,
-      imgS,
-      imgL,
-      brief,
-      quantity,
-      rating,
-      category,
-      volume,
-      price,
-      appointment,
-      ...rest
-    } = ret;
-
-    return {
-      id: _id.toString(),
-      name,
-      imgS,
-      imgL,
-      brief,
-      quantity,
-      rating,
-      category,
-      volume,
-      price,
-      appointment,
-      ...rest,
-    };
-  },
-});
-
-ProductSchema.set('toObject', {
-  virtuals: true,
-});
-
 export const ProductModel = mongoose.model<ProductDoc>(
   'Product',
   ProductSchema,
