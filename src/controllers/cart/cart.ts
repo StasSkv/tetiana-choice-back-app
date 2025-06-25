@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import {
   clearCart,
   getCart,
+  addToCart,
   removeFromCart,
   updateCart,
-  addToCart,
 } from '../../services/cart/cart.js';
 
 const userId = '666a1f2c8f1d2c4a12345671';
@@ -23,8 +23,8 @@ export const addToCartController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { productId, quantity } = req.body;
-  const cart = await addToCart(userId, productId, quantity);
+  const { productId } = req.body;
+  const cart = await addToCart(userId, productId);
   res.status(200).json(cart);
 };
 

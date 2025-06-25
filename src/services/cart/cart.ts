@@ -9,12 +9,21 @@ export const getCart = async (userId: string) => {
 export const addToCart = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
-  quantity: number,
 ) => {
   const cart = await CartModel.findOneAndUpdate(
     { userId },
-    { $addToSet: { products: { productId, quantity } } },
-    { new: true },
+    {
+      $addToSet: {
+        products: {
+          productId,
+          quantity: 1,
+        },
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+    },
   );
   return cart;
 };
@@ -25,12 +34,23 @@ export const updateCart = async (
   quantity: number,
 ) => {
   const cart = await CartModel.findOneAndUpdate(
-    { userId, 'products.productId': productId },
-    { $set: { 'products.$.quantity': quantity } },
-    { new: true },
+    {
+      userId,
+      'products.productId': productId,
+    },
+    {
+      $set: {
+        'products.$.quantity': quantity,
+      },
+    },
+    {
+      new: true,
+    },
   );
+
   return cart;
 };
+
 
 export const removeFromCart = async (
   userId: string,
@@ -38,8 +58,14 @@ export const removeFromCart = async (
 ) => {
   const cart = await CartModel.findOneAndUpdate(
     { userId },
-    { $pull: { products: productId } },
-    { new: true },
+    {
+      $pull: {
+        products: { productId },
+      },
+    },
+    {
+      new: true,
+    },
   );
   return cart;
 };
