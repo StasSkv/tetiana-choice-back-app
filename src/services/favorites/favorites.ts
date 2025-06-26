@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { FavoriteModel } from '../../db/models/favorites/favorites.js';
 
 export const getFavorites = async (userId: string) => {
-  const favorites = await FavoriteModel.find({ userId });
+  const favorites = await FavoriteModel.findOne({ userId });
   return favorites;
 };
 
