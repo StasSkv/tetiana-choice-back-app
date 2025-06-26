@@ -6,13 +6,12 @@ export const getCart = async (userId: string) => {
   const cart = await CartModel.findOne({ userId });
 
   if (!cart || cart.products.length === 0) {
-    return { products: [], total: 0 };
+    return { products: [], totalPriceCart: 0 };
   }
 
   const detailedProducts = await Promise.all(
     cart.products.map(async ({ productId, quantity }) => {
       const product = await ProductModel.findById(productId);
-
       if (!product) return null;
 
       return {
@@ -38,22 +37,25 @@ export const addToCart = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
 ) => {
-  const cart = await CartModel.findOneAndUpdate(
-    { userId },
-    {
-      $addToSet: {
-        products: {
-          productId,
-          quantity: 1,
-        },
-      },
-    },
-    {
-      new: true,
-      upsert: true,
-    },
+  const cart = await CartModel.findOne({ userId });
+
+  if (!cart) {
+    await CartModel.create({ userId, products: [{ productId, quantity: 1 }] });
+    return await getCart(userId);
+  }
+
+  const existingProduct = cart.products.find((p) =>
+    p.productId.equals(productId),
   );
-  return cart;
+
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    cart.products.push({ productId, quantity: 1 });
+  }
+
+  await cart.save();
+  return await getCart(userId);
 };
 
 export const updateCart = async (
@@ -61,47 +63,38 @@ export const updateCart = async (
   productId: mongoose.Types.ObjectId,
   quantity: number,
 ) => {
-  const cart = await CartModel.findOneAndUpdate(
-    {
-      userId,
-      'products.productId': productId,
-    },
-    {
-      $set: {
-        'products.$.quantity': quantity,
-      },
-    },
-    {
-      new: true,
-    },
+  if (quantity === 0) {
+    return await removeFromCart(userId, productId);
+  }
+
+  await CartModel.findOneAndUpdate(
+    { userId, 'products.productId': productId },
+    { $set: { 'products.$.quantity': quantity } },
+    { new: true },
   );
 
-  return cart;
+  return await getCart(userId);
 };
 
 export const removeFromCart = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
 ) => {
-  const cart = await CartModel.findOneAndUpdate(
+  await CartModel.findOneAndUpdate(
     { userId },
-    {
-      $pull: {
-        products: { productId },
-      },
-    },
-    {
-      new: true,
-    },
+    { $pull: { products: { productId } } },
+    { new: true },
   );
-  return cart;
+
+  return await getCart(userId);
 };
 
 export const clearCart = async (userId: string) => {
-  const cart = await CartModel.findOneAndUpdate(
+  await CartModel.findOneAndUpdate(
     { userId },
     { $set: { products: [] } },
     { new: true },
   );
-  return cart;
+
+  return await getCart(userId);
 };
