@@ -9,6 +9,7 @@ import { pinoMiddleware } from './middlewares/pino.js';
 import { corsOptions } from './middlewares/cors.js';
 import favoritesRouter from './routers/favorites/favorites.js';
 import cartRouter from './routers/cart/cart.js';
+import reviewsRouter from './routers/reviews/reviews.js';
 
 const PORT = getEnvVar('PORT', '3000');
 
@@ -24,6 +25,7 @@ export const startServer = () => {
   app.use('/products', productRouter);
   app.use('/favorites', favoritesRouter);
   app.use('/cart', cartRouter);
+  app.use('/reviews', reviewsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
