@@ -3,6 +3,7 @@ import {
   getAllProducts,
   getProductById,
 } from '../../services/products/products.js';
+import { getAverageRatingForProduct } from '../../services/reviews/reviews.js';
 import createError from 'http-errors';
 
 const productsController = async (
@@ -24,9 +25,16 @@ const productByIdController = async (
   if (!product) {
     throw createError(404, 'Product not found');
   }
+  const { averageRating, ratingsCount } = await getAverageRatingForProduct(
+    productId,
+  );
   res.json({
     status: 'success',
-    data: product,
+    data: {
+      averageRating,
+      ratingsCount,
+      ...product.toObject(),
+    },
   });
 };
 
