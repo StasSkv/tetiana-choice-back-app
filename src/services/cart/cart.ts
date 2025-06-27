@@ -18,6 +18,9 @@ export const getCart = async (userId: string) => {
         productId,
         quantity,
         price: product.price,
+        name: product.name,
+        brief: product.brief,
+        imgS: product.imgS,
         totalPriceProduct: Number(product.price) * quantity,
       };
     }),
