@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { getEnvVar } from './utils/getEnvVar.js';
 import productRouter from './routers/products/products.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -11,11 +10,13 @@ import favoritesRouter from './routers/favorites/favorites.js';
 import cartRouter from './routers/cart/cart.js';
 import reviewsRouter from './routers/reviews/reviews.js';
 import ordersRouter from './routers/orders/orders.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const PORT = getEnvVar('PORT', '3000');
 
 export const startServer = () => {
-  dotenv.config();
 
   const app = express();
 
