@@ -27,10 +27,22 @@ const OptionSchema = new Schema<Option>({
 const ProductSchema = new Schema<ProductDoc>(
   {
     name: { type: String, required: true },
-    category: { type: String, required: true },
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        'Biox',
+        'White Mandarin',
+        'Choice Phyto',
+        'Pro Healthy',
+        'Green Max',
+        'Good Food',
+        'Sets',
+      ],
+    },
     brief: { type: String, required: true },
     volume: { type: String, required: true },
-    price: { type: String, required: true },
+    price: { type: Number, required: true },
     appointment: { type: String, required: true },
     quantity: { type: Number, required: true },
     rating: { type: [Number], default: [] },

@@ -4,7 +4,6 @@ import { ProductModel } from '../../db/models/product/product.js';
 
 export const getCart = async (userId: string) => {
   const cart = await CartModel.findOne({ userId });
-
   if (!cart || cart.products.length === 0) {
     return { products: [], totalPriceCart: 0 };
   }

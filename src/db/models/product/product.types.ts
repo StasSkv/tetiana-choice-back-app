@@ -19,7 +19,7 @@ export interface Product {
   category: string;
   brief: string;
   volume: string;
-  price: string;
+  price: number;
   quantity: number;
   rating: number[];
   imgS: string;
