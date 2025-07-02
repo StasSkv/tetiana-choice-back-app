@@ -35,6 +35,45 @@ export const getCart = async (userId: string) => {
   return { products: filteredProducts, totalPriceCart };
 };
 
+// Тіло запиту:
+// [
+//   { productId: "6855df7d7bc5a3382a8fa9d5", quantity: 2 },
+//   { productId: "6855e38d7bc5a3382a8fa9de", quantity: 1 },
+// ]
+
+export const getCartNotAuthorized = async (productsInBody: { productId: string; quantity: number }[]) => {
+  if (!productsInBody || productsInBody.length === 0) {
+    return { products: [], totalPriceCart: 0 };
+  }
+
+  const detailedProducts = await Promise.all(
+    productsInBody.map(async ({ productId, quantity }) => {
+      const product = await ProductModel.findById(productId);
+      if (!product) return null;
+
+      return {
+        productId,
+        quantity,
+        price: product.price,
+        name: product.name,
+        brief: product.brief,
+        imgS: product.imgS,
+        totalPriceProduct: Number(product.price) * quantity,
+      };
+    })
+  );
+
+  const filteredProducts = detailedProducts.filter(Boolean);
+
+  const totalPriceCart = filteredProducts.reduce(
+    (sum, item) => sum + (item?.totalPriceProduct || 0),
+    0,
+  );
+
+  return { products: filteredProducts, totalPriceCart };
+};
+
+
 export const addToCart = async (
   userId: string,
   productId: mongoose.Types.ObjectId,

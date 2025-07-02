@@ -5,11 +5,13 @@ import {
   clearCartController,
   removeFromCartController,
   updateCartController,
+  getCartNotAuthorizedController,
 } from '../../controllers/cart/cart.js';
 import { ctrlWrapper } from '../../utils/ctrlWrapper.js';
 import {
   createAndDeleteCartSchema,
   updateCartSchema,
+  cartNotAuthorizedSchema,
 } from '../../validation/cart.js';
 import { validateBody } from '../../middlewares/validateBody.js';
 
@@ -32,5 +34,11 @@ router.delete(
   ctrlWrapper(removeFromCartController),
 );
 router.put('/', ctrlWrapper(clearCartController));
+
+router.post(
+  '/not-authorized',
+  validateBody(cartNotAuthorizedSchema),
+  ctrlWrapper(getCartNotAuthorizedController),
+);
 
 export default router;

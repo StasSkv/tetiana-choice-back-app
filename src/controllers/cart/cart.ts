@@ -5,6 +5,7 @@ import {
   addToCart,
   removeFromCart,
   updateCart,
+  getCartNotAuthorized,
 } from '../../services/cart/cart.js';
 
 const userId = '666a1f2c8f1d2c4a12345671';
@@ -15,6 +16,16 @@ export const getCartController = async (
   next: NextFunction,
 ) => {
   const cart = await getCart(userId);
+  res.status(200).json(cart);
+};
+
+export const getCartNotAuthorizedController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { productIds } = req.body;
+  const cart = await getCartNotAuthorized(productIds);
   res.status(200).json(cart);
 };
 
