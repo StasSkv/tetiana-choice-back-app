@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { FavoriteModel } from '../../db/models/favorites/favorites.js';
+import { ProductModel } from '../../db/models/product/product.js';
 
 export const getFavorites = async (userId: string) => {
   const favorites = await FavoriteModel.aggregate([
@@ -67,6 +68,45 @@ export const getFavorites = async (userId: string) => {
 
   return favorites[0] || null;
 };
+
+export const getFavoritesNotAuthorized = async (productIds: string[]) => {
+  const objectIds = productIds.map((id) => new mongoose.Types.ObjectId(id));
+
+  const products = await ProductModel.aggregate([
+    { $match: { _id: { $in: objectIds } } },
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'productId',
+        as: 'reviews',
+      },
+    },
+    {
+      $addFields: {
+        averageRating: {
+          $avg: '$reviews.rating',
+        },
+        ratingsCount: {
+          $size: '$reviews',
+        },
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        brief: 1,
+        price: 1,
+        imgS: 1,
+        averageRating: 1,
+        ratingsCount: 1,
+      },
+    },
+  ]);
+
+  return products;
+};
+
 
 export const addFavorite = async (
   userId: string,

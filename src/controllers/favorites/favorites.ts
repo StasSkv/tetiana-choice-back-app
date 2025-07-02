@@ -3,6 +3,7 @@ import {
   addFavorite,
   clearFavorites,
   getFavorites,
+  getFavoritesNotAuthorized,
   removeFavorite,
 } from '../../services/favorites/favorites.js';
 import mongoose from 'mongoose';
@@ -15,6 +16,16 @@ export const getFavoritesController = async (
   next: NextFunction,
 ) => {
   const favorites = await getFavorites(userId);
+  res.status(200).json(favorites);
+};
+
+export const getFavoriteNotAuthorizedController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { productIds } = req.body;
+  const favorites = await getFavoritesNotAuthorized(productIds);
   res.status(200).json(favorites);
 };
 
