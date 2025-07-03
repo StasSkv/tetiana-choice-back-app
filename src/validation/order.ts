@@ -12,10 +12,8 @@ const createOrderSchema = Joi.object({
     'string.max': 'Name must be less than 100 characters',
     'any.required': 'Name is required',
   }),
-  email: Joi.string().email().required().messages({
+  email: Joi.string().email().optional().messages({
     'string.email': 'Email must be a valid email address',
-    'string.empty': 'Email is required',
-    'any.required': 'Email is required',
   }),
   phone: Joi.string()
     .pattern(/^\+?\d{9,15}$/)
