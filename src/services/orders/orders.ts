@@ -1,5 +1,6 @@
 import { ProductModel } from '../../db/models/product/product.js';
 import { OrderModel } from '../../db/models/orders/orders.js';
+import { getNextOrderNumber } from '../../utils/getNewOrderNumber.js';
 
 export const createOrderService = async (orderData: any) => {
   const {
@@ -35,8 +36,11 @@ export const createOrderService = async (orderData: any) => {
     0,
   );
 
+  const orderNumber = await getNextOrderNumber();
+
   const order = await OrderModel.create({
     userId: userId || null,
+    orderNumber,
     name,
     email,
     phone,
