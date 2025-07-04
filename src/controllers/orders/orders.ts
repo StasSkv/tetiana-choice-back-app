@@ -8,7 +8,8 @@ const chatId: string = getEnvVar('CHAT_ID');
 
 export const createOrderController = async (req: Request, res: Response) => {
   const order = await createOrderService(req.body);
-  const message = templateOrderMessage(order);
+  console.log(JSON.stringify(order.toObject(), null, 2));
+  const message = templateOrderMessage(order.toObject());
   try {
     await telegramBot.api.sendMessage(chatId, message);
   } catch (error) {
