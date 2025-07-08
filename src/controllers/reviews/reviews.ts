@@ -5,6 +5,7 @@ import {
   getReviewsByUser,
   getReviewsProduct,
 } from '../../services/reviews/reviews.js';
+import { CustomRequest } from '../../types/customRequest.js';
 
 export const getAllReviewsController = async (
   req: Request,
@@ -34,10 +35,18 @@ export const getReviewsByProductController = async (
 };
 
 export const createReviewController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const review = await createReviewProduct(req.body);
-  res.status(201).json(review);
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const review = await createReviewProduct({ ...req.body, userId });
+    res.status(201).json(review);
+  } catch (error) {
+    next(error);
+  }
 };

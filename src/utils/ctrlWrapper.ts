@@ -1,9 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, RequestHandler } from 'express';
 
-export const ctrlWrapper = (ctrl: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+export const ctrlWrapper = <Req extends Request = Request>(
+  ctrl: (req: Req, res: Response, next: NextFunction) => Promise<any>,
+): RequestHandler => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await ctrl(req, res, next);
+      await ctrl(req as Req, res, next);
     } catch (error) {
       next(error);
     }

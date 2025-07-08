@@ -14,26 +14,30 @@ import {
   cartNotAuthorizedSchema,
 } from '../../validation/cart.js';
 import { validateBody } from '../../middlewares/validateBody.js';
+import { authenticate } from '../../middlewares/authenticate.js';
 
 const router = Router();
 
-router.get('/', ctrlWrapper(getCartController));
+router.get('/', authenticate, ctrlWrapper(getCartController));
 router.post(
   '/',
+  authenticate,
   validateBody(createAndDeleteCartSchema),
   ctrlWrapper(addToCartController),
 );
 router.patch(
   '/',
+  authenticate,
   validateBody(updateCartSchema),
   ctrlWrapper(updateCartController),
 );
 router.delete(
   '/',
+  authenticate,
   validateBody(createAndDeleteCartSchema),
   ctrlWrapper(removeFromCartController),
 );
-router.put('/', ctrlWrapper(clearCartController));
+router.put('/', authenticate, ctrlWrapper(clearCartController));
 
 router.post(
   '/not-authorized',

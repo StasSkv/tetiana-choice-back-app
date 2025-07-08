@@ -7,16 +7,24 @@ import {
   updateCart,
   getCartNotAuthorized,
 } from '../../services/cart/cart.js';
+import { CustomRequest } from '../../types/customRequest.js';
 
-const userId = '666a1f2c8f1d2c4a12345671';
 
 export const getCartController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const cart = await getCart(userId);
-  res.status(200).json(cart);
+ try {
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const cart = await getCart(userId.toString());
+    res.status(200).json(cart);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getCartNotAuthorizedController = async (
@@ -30,40 +38,60 @@ export const getCartNotAuthorizedController = async (
 };
 
 export const addToCartController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const { productId } = req.body;
-  const cart = await addToCart(userId, productId);
-  res.status(200).json(cart);
+  try {
+    const { productId } = req.body;
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const cart = await addToCart(userId.toString(), productId);
+    res.status(200).json(cart);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateCartController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
   const { productId, quantity } = req.body;
-  const cart = await updateCart(userId, productId, quantity);
+  const cart = await updateCart(userId.toString(), productId, quantity);
   res.status(200).json(cart);
 };
 
 export const removeFromCartController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
   const { productId } = req.body;
-  const cart = await removeFromCart(userId, productId);
+  const cart = await removeFromCart(userId.toString(), productId);
   res.status(200).json(cart);
 };
 
 export const clearCartController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const cart = await clearCart(userId);
+  const userId = req.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const cart = await clearCart(userId.toString());
   res.status(200).json(cart);
 };

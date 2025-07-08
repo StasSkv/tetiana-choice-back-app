@@ -1,8 +1,9 @@
 import { ProductModel } from '../../db/models/product/product.js';
 import { OrderModel } from '../../db/models/orders/orders.js';
 import { getNextOrderNumber } from '../../utils/getNewOrderNumber.js';
+import { CreateOrderPayload } from './types.js';
 
-export const createOrderService = async (orderData: any) => {
+export const createOrderService = async (orderData: CreateOrderPayload) => {
   const {
     userId,
     name,
@@ -19,7 +20,9 @@ export const createOrderService = async (orderData: any) => {
   const dbProducts = await ProductModel.find({ _id: { $in: productIds } });
 
   const orderProducts = products.map((item: any) => {
-    const matched = dbProducts.find((p: any) => p._id.toString() === item.productId);
+    const matched = dbProducts.find(
+      (p: any) => p._id.toString() === item.productId,
+    );
     if (!matched) {
       throw new Error(`Продукт з id ${item.productId} не знайдено`);
     }

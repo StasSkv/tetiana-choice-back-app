@@ -1,10 +1,16 @@
 import Joi from 'joi';
+import { isValidObjectId } from 'mongoose';
 
 const createOrderSchema = Joi.object({
-  userId: Joi.string().hex().length(24).optional().allow(null, '').messages({
-    'string.hex': 'User ID must be a valid MongoDB ObjectId',
-    'string.length': 'User ID must be 24 characters long',
-  }),
+  userId: Joi.string()
+    .optional()
+    .allow(null, '')
+    .custom((value: string, helper: Joi.CustomHelpers<string>) => {
+      if (value && !isValidObjectId(value)) {
+        return helper.message('User id should be a valid mongo id' as any);
+      }
+      return value;
+    }),
   name: Joi.string().min(2).max(100).required().messages({
     'string.base': 'Name must be a string',
     'string.empty': 'Name is required',

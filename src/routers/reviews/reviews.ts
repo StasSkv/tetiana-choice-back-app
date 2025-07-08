@@ -8,6 +8,7 @@ import {
 } from '../../controllers/reviews/reviews.js';
 import { validateBody } from '../../middlewares/validateBody.js';
 import { createReviewSchema } from '../../validation/reviews.js';
+import { authenticate } from '../../middlewares/authenticate.js';
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get('/user/:userId', ctrlWrapper(getReviewsByUserController));
 router.get('/product/:productId', ctrlWrapper(getReviewsByProductController));
 router.post(
   '/',
+  authenticate,
   validateBody(createReviewSchema),
   ctrlWrapper(createReviewController),
 );

@@ -11,14 +11,19 @@ import cartRouter from './routers/cart/cart.js';
 import reviewsRouter from './routers/reviews/reviews.js';
 import ordersRouter from './routers/orders/orders.js';
 import { registerTelegramWebhook } from './telegramBot/telegramWebhook.js';
+import authRouter from './routers/auth/auth.js';
+// import adminRouter from './routers/admin/admin.js';
 
 dotenv.config();
 
-export const createServer = () => {
+export const createServer = async () => {
   const app = express();
+
+  const { default: cookieParser } = await import('cookie-parser');
 
   app.use(cors(corsOptions));
   app.use(express.json());
+  app.use(cookieParser());
   app.use(pinoMiddleware);
 
   app.use('/products', productRouter);
@@ -26,6 +31,8 @@ export const createServer = () => {
   app.use('/cart', cartRouter);
   app.use('/reviews', reviewsRouter);
   app.use('/orders', ordersRouter);
+  app.use('/auth', authRouter);
+  // app.use('/admin', adminRouter);
 
   registerTelegramWebhook(app);
 

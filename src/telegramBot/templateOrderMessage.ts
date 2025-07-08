@@ -4,20 +4,20 @@ const templateString = `
 Замовлення №{{orderNumber}}
 Ім'я: {{name}}
 Телефон: {{phone}}
-Авторизований: {{authorization}}
+Авторизований: {{formatAuthorization authorization}}
 Товари:
 {{#each products}}
   {{increment @index}}. {{this.name}} - {{this.quantity}} шт. - {{this.price}} грн.
 {{/each}}
 Загальна сума: {{totalPrice}} грн.
-Метод оплати: {{paymentMethod}}
+Метод оплати: {{formatPaymentMethod paymentMethod}}
 
 Одержувач:
 {{#if recipient}}
  Ім'я: {{recipient.fullName}}
  Телефон: {{recipient.phone}}
  Місто: {{recipient.city}}
- Служба доставки: {{recipient.deliveryMethod}}
+ Служба доставки: {{formatDeliveryMethod recipient.deliveryMethod}}
  Відділення: {{recipient.department}}
 {{/if}}
 
@@ -36,6 +36,28 @@ Handlebars.registerHelper('formatDate', function (datetime) {
   const hh = String(date.getHours()).padStart(2, '0');
   const min = String(date.getMinutes()).padStart(2, '0');
   return `${dd}.${mm}.${yyyy} ${hh}:${min}`;
+});
+
+Handlebars.registerHelper('formatDeliveryMethod', function (method) {
+  const map = {
+    Nova_Poshta: 'Нова Пошта',
+    Ukrposhta: 'Укрпошта',
+    Self: 'Самовивіз',
+  };
+  return map[method as keyof typeof map] || 'Невідомо';
+});
+
+Handlebars.registerHelper('formatPaymentMethod', function (method) {
+  const map = {
+    card: 'Картка',
+    cash: 'Готівка',
+    overpayment: 'Передоплата',
+  };
+  return map[method as keyof typeof map] || 'Невідомо';
+});
+
+Handlebars.registerHelper('formatAuthorization', function (auth) {
+  return auth ? 'Так' : 'Ні';
 });
 
 export const templateOrderMessage = Handlebars.compile(templateString);

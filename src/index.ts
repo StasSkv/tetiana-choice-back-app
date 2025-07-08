@@ -10,7 +10,7 @@ const WEBHOOK_URL = getEnvVar('WEBHOOK_URL');
 const bootstrap = async (): Promise<void> => {
   try {
     await initMongoDB();
-    const app = createServer();
+    const app = await createServer();
 
     await telegramBot.api.setWebhook(WEBHOOK_URL);
     console.log('Telegram webhook set');

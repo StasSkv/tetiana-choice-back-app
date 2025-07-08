@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { isValidObjectId } from 'mongoose';
 
 export const createAndDeleteCartSchema = Joi.object({
   productId: Joi.string().hex().length(24).required().messages({
@@ -11,6 +12,14 @@ export const createAndDeleteCartSchema = Joi.object({
     'number.integer': 'Quantity must be an integer',
     'number.min': 'Quantity must be at least 1',
   }),
+  userId: Joi.string().custom(
+    (value: string, helper: Joi.CustomHelpers<string>) => {
+      if (value && !isValidObjectId(value)) {
+        return helper.message('User id should be a valid mongo id' as any);
+      }
+      return value;
+    },
+  ),
 });
 
 export const updateCartSchema = Joi.object({
@@ -25,6 +34,14 @@ export const updateCartSchema = Joi.object({
     'number.min': 'Quantity must be at least 1',
     'any.required': 'Quantity is required',
   }),
+  userId: Joi.string().custom(
+    (value: string, helper: Joi.CustomHelpers<string>) => {
+      if (value && !isValidObjectId(value)) {
+        return helper.message('User id should be a valid mongo id' as any);
+      }
+      return value;
+    },
+  ),
 });
 
 

@@ -7,16 +7,24 @@ import {
   removeFavorite,
 } from '../../services/favorites/favorites.js';
 import mongoose from 'mongoose';
+import { CustomRequest } from '../../types/customRequest.js';
 
-const userId = '685bcaf96a851441801c5a51';
 
 export const getFavoritesController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const favorites = await getFavorites(userId);
-  res.status(200).json(favorites);
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const favorites = await getFavorites(userId.toString());
+    res.status(200).json(favorites);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getFavoriteNotAuthorizedController = async (
@@ -30,32 +38,59 @@ export const getFavoriteNotAuthorizedController = async (
 };
 
 export const addFavoriteController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const { productId: productIdString } = req.body;
-  const productId = new mongoose.Types.ObjectId(productIdString);
-  const favorite = await addFavorite(userId, productId);
-  res.status(201).json(favorite);
+  try {
+    const { productId: productIdString } = req.body;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const productId = new mongoose.Types.ObjectId(productIdString);
+    const favorite = await addFavorite(userId.toString(), productId);
+
+    res.status(201).json(favorite);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const removeFavoriteController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const { productId: productIdString } = req.body;
-  const productId = new mongoose.Types.ObjectId(productIdString);
-  const favorite = await removeFavorite(userId, productId);
-  res.status(200).json(favorite);
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const { productId: productIdString } = req.body;
+    const productId = new mongoose.Types.ObjectId(productIdString);
+    const favorite = await removeFavorite(userId.toString(), productId);
+    res.status(200).json(favorite);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const clearFavoritesController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const favorite = await clearFavorites(userId);
-  res.status(200).json(favorite);
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const favorite = await clearFavorites(userId.toString());
+    res.status(200).json(favorite);
+  } catch (error) {
+    next(error);
+  }
 };

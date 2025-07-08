@@ -1,10 +1,15 @@
 import Joi from 'joi';
+import { isValidObjectId } from 'mongoose';
 
 export const createReviewSchema = Joi.object({
-  userId: Joi.string().hex().length(24).optional().allow(null, '').messages({
-    'string.hex': 'User ID must be a valid MongoDB ObjectId',
-    'string.length': 'User ID must be 24 characters long',
-  }),
+  userId: Joi.string().custom(
+    (value: string, helper: Joi.CustomHelpers<string>) => {
+      if (value && !isValidObjectId(value)) {
+        return helper.message('User id should be a valid mongo id' as any);
+      }
+      return value;
+    },
+  ),
   productId: Joi.string().hex().length(24).required().messages({
     'string.hex': 'Product ID must be a valid MongoDB ObjectId',
     'string.length': 'Product ID must be 24 characters long',
