@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { FIFTEEN_MINUTES, SEVEN_DAYS } from '../../constants/index.js';
 import { SessionModel } from '../../db/models/session/session.js';
+import { Types } from 'mongoose';
 
 interface RegisterUserPayload {
   name: string;
@@ -37,8 +38,6 @@ export const loginUser = async (payload: LoginUserPayload) => {
   await SessionModel.deleteOne({ userId: user._id });
   const accessToken = randomBytes(30).toString('base64');
   const refreshToken = randomBytes(30).toString('base64');
-
-  console.log('Creating session with tokens:', { accessToken, refreshToken });
   return await SessionModel.create({
     userId: user._id,
     accessToken,
@@ -88,4 +87,30 @@ export const refreshUsersSession = async ({
     userId: session.userId,
     ...newSession,
   });
+};
+
+export const getCurrentUser = async (
+  sessionId: string,
+  accessToken: string,
+) => {
+  if (!sessionId || !accessToken) {
+    throw createHttpError(401, 'Unauthorized');
+  }
+  const session = await SessionModel.findOne({
+    _id: new Types.ObjectId(sessionId),
+    accessToken,
+  });
+  if (!session) {
+    throw createHttpError(401, 'Session not found or invalid');
+  }
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
+  if (isAccessTokenExpired) {
+    throw createHttpError(401, 'Access token expired');
+  }
+  const user = await UserModel.findById(session.userId).select('-password');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  return user;
 };

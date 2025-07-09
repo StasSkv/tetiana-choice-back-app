@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
 export interface ISession extends Document {
+  _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   accessToken: string;
   refreshToken: string;
@@ -12,6 +13,10 @@ export interface ISession extends Document {
 
 const sessionSchema = new Schema<ISession>(
   {
+    _id: {
+      type: Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId(),
+    },
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
