@@ -7,9 +7,38 @@ export const getCart = async (userId: string) => {
   if (!cart || cart.products.length === 0) {
     return { products: [], totalPriceCart: 0 };
   }
-
   const detailedProducts = await Promise.all(
     cart.products.map(async ({ productId, quantity }) => {
+      const product = await ProductModel.findById(productId);
+      if (!product) return null;
+      return {
+        productId,
+        quantity,
+        price: product.price,
+        name: product.name,
+        brief: product.brief,
+        imgS: product.imgS,
+        totalPriceProduct: Number(product.price) * quantity,
+      };
+    }),
+  );
+  const filteredProducts = detailedProducts.filter(Boolean);
+  const totalPriceCart = filteredProducts.reduce(
+    (sum, item) => sum + (item?.totalPriceProduct || 0),
+    0,
+  );
+  return { products: filteredProducts, totalPriceCart };
+};
+
+export const getCartNotAuthorized = async (
+  productsInBody: { productId: string; quantity: number }[],
+) => {
+  if (!productsInBody || productsInBody.length === 0) {
+    return { products: [], totalPriceCart: 0 };
+  }
+
+  const detailedProducts = await Promise.all(
+    productsInBody.map(async ({ productId, quantity }) => {
       const product = await ProductModel.findById(productId);
       if (!product) return null;
 
@@ -35,66 +64,23 @@ export const getCart = async (userId: string) => {
   return { products: filteredProducts, totalPriceCart };
 };
 
-// Тіло запиту:
-// [
-//   { productId: "6855df7d7bc5a3382a8fa9d5", quantity: 2 },
-//   { productId: "6855e38d7bc5a3382a8fa9de", quantity: 1 },
-// ]
-
-export const getCartNotAuthorized = async (productsInBody: { productId: string; quantity: number }[]) => {
-  if (!productsInBody || productsInBody.length === 0) {
-    return { products: [], totalPriceCart: 0 };
-  }
-
-  const detailedProducts = await Promise.all(
-    productsInBody.map(async ({ productId, quantity }) => {
-      const product = await ProductModel.findById(productId);
-      if (!product) return null;
-
-      return {
-        productId,
-        quantity,
-        price: product.price,
-        name: product.name,
-        brief: product.brief,
-        imgS: product.imgS,
-        totalPriceProduct: Number(product.price) * quantity,
-      };
-    })
-  );
-
-  const filteredProducts = detailedProducts.filter(Boolean);
-
-  const totalPriceCart = filteredProducts.reduce(
-    (sum, item) => sum + (item?.totalPriceProduct || 0),
-    0,
-  );
-
-  return { products: filteredProducts, totalPriceCart };
-};
-
-
 export const addToCart = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
 ) => {
   const cart = await CartModel.findOne({ userId });
-
   if (!cart) {
     await CartModel.create({ userId, products: [{ productId, quantity: 1 }] });
     return await getCart(userId);
   }
-
   const existingProduct = cart.products.find((p) =>
     p.productId.equals(productId),
   );
-
   if (existingProduct) {
     existingProduct.quantity += 1;
   } else {
     cart.products.push({ productId, quantity: 1 });
   }
-
   await cart.save();
   return await getCart(userId);
 };
@@ -107,13 +93,11 @@ export const updateCart = async (
   if (quantity === 0) {
     return await removeFromCart(userId, productId);
   }
-
   await CartModel.findOneAndUpdate(
     { userId, 'products.productId': productId },
     { $set: { 'products.$.quantity': quantity } },
     { new: true },
   );
-
   return await getCart(userId);
 };
 
@@ -126,7 +110,6 @@ export const removeFromCart = async (
     { $pull: { products: { productId } } },
     { new: true },
   );
-
   return await getCart(userId);
 };
 
@@ -136,6 +119,5 @@ export const clearCart = async (userId: string) => {
     { $set: { products: [] } },
     { new: true },
   );
-
   return await getCart(userId);
 };

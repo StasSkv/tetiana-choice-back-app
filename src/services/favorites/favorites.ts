@@ -3,6 +3,10 @@ import { FavoriteModel } from '../../db/models/favorites/favorites.js';
 import { ProductModel } from '../../db/models/product/product.js';
 
 export const getFavorites = async (userId: string) => {
+  const favoritesProducts = await FavoriteModel.findOne({ userId });
+  if (!favoritesProducts || favoritesProducts.products.length === 0) {
+    return { favoritesProducts: [], favoritesIds: [] };
+  }
   const favorites = await FavoriteModel.aggregate([
     { $match: { userId: new mongoose.Types.ObjectId(userId) } },
     {
@@ -65,7 +69,6 @@ export const getFavorites = async (userId: string) => {
       },
     },
   ]);
-
   return favorites[0] || null;
 };
 
