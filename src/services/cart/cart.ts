@@ -36,12 +36,10 @@ export const getCartNotAuthorized = async (
   if (!productsInBody || productsInBody.length === 0) {
     return { products: [], totalPriceCart: 0 };
   }
-
   const detailedProducts = await Promise.all(
     productsInBody.map(async ({ productId, quantity }) => {
       const product = await ProductModel.findById(productId);
       if (!product) return null;
-
       return {
         productId,
         quantity,

@@ -110,12 +110,11 @@ export const getFavoritesNotAuthorized = async (productIds: string[]) => {
   return products;
 };
 
-
 export const addFavorite = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
 ) => {
-  const updated = await FavoriteModel.findOneAndUpdate(
+  await FavoriteModel.findOneAndUpdate(
     { userId },
     {
       $addToSet: { products: productId },
@@ -123,26 +122,26 @@ export const addFavorite = async (
     { new: true, upsert: true },
   );
 
-  return updated;
+  return await getFavorites(userId);
 };
 
 export const removeFavorite = async (
   userId: string,
   productId: mongoose.Types.ObjectId,
 ) => {
-  const favorite = await FavoriteModel.findOneAndUpdate(
+  await FavoriteModel.findOneAndUpdate(
     { userId },
     { $pull: { products: productId } },
     { new: true },
   );
-  return favorite;
+  return await getFavorites(userId);
 };
 
 export const clearFavorites = async (userId: string) => {
-  const favorite = await FavoriteModel.findOneAndUpdate(
+await FavoriteModel.findOneAndUpdate(
     { userId },
     { $set: { products: [] } },
     { new: true },
   );
-  return favorite;
+  return await getFavorites(userId);
 };
