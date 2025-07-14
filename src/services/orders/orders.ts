@@ -28,17 +28,26 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
       productId: matched._id,
       name: matched.name,
       price: matched.price,
+      priceForPartner: Math.round(matched.price * 0.7),
+      points: matched.points,
       quantity: item.quantity,
     };
   });
-
   const totalPrice = orderProducts.reduce(
     (acc: number, item: any) => acc + item.price * item.quantity,
     0,
   );
+  const totalPoints = orderProducts.reduce(
+    (acc: number, item: any) => acc + item.points * item.quantity,
+    0,
+  );
+
+  const totalPriceForPartner = orderProducts.reduce(
+    (acc: number, item: any) => acc + item.priceForPartner * item.quantity,
+    0,
+  );
 
   const orderNumber = await getNextOrderNumber();
-
   const order = await OrderModel.create({
     userId: userId || null,
     orderNumber,
@@ -48,6 +57,8 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
     authorization: !!userId,
     products: orderProducts,
     totalPrice,
+    totalPriceForPartner,
+    totalPoints,
     status,
     paymentMethod,
     paymentStatus,

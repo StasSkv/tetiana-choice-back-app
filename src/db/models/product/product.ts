@@ -48,6 +48,7 @@ const ProductSchema = new Schema<ProductDoc>(
     rating: { type: [Number], default: [] },
     imgS: { type: String, required: true },
     imgL: { type: String, required: true },
+    points: { type: Number, required: true },
     description: { type: [DescriptionSchema], required: true },
     advantages: { type: [String], required: true },
     actions: { type: [String], required: true },

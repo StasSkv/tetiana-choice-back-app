@@ -1,28 +1,39 @@
 import Handlebars from 'handlebars';
 
 const templateString = `
-Замовлення №{{orderNumber}}
-Ім'я: {{name}}
-Телефон: {{phone}}
-Авторизований: {{formatAuthorization authorization}}
-Товари:
-{{#each products}}
-  {{increment @index}}. {{this.name}} - {{this.quantity}} шт. - {{this.price}} грн.
-{{/each}}
-Загальна сума: {{totalPrice}} грн.
-Метод оплати: {{formatPaymentMethod paymentMethod}}
+📦 *Замовлення №{{orderNumber}}*
 
-Одержувач:
+👤 *Клієнт:*
+• Ім'я: {{name}}
+• Телефон: {{phone}}
+• Авторизований: {{formatAuthorization authorization}}
+
+🛒 *Товари:*
+{{#each products}}
+  {{increment @index}}. {{this.name}} — {{this.quantity}} шт. × {{this.price}} грн ({{this.points}} балів)
+{{/each}}
+
+💰 *Підсумки:*
+• Загальна сума: {{totalPrice}} грн
+• Для партнера: {{totalPriceForPartner}} грн
+• Нараховано балів: {{totalPoints}}
+
+💳 *Оплата:* {{formatPaymentMethod paymentMethod}}
+
+🏠 *Одержувач:*
 {{#if recipient}}
- Ім'я: {{recipient.fullName}}
- Телефон: {{recipient.phone}}
- Місто: {{recipient.city}}
- Служба доставки: {{formatDeliveryMethod recipient.deliveryMethod}}
- Відділення: {{recipient.department}}
+• Ім'я: {{recipient.fullName}}
+• Телефон: {{recipient.phone}}
+• Місто: {{recipient.city}}
+• Доставка: {{formatDeliveryMethod recipient.deliveryMethod}}
+• Відділення: {{recipient.department}}
+{{else}}
+(немає даних)
 {{/if}}
 
-Дата замовлення: {{formatDate createdAt}}
+📅 *Дата замовлення:* {{formatDate createdAt}}
 `;
+
 
 Handlebars.registerHelper('increment', function (value, options) {
   return parseInt(value) + 1;

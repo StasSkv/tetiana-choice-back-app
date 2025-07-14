@@ -18,9 +18,12 @@ const OrderSchema = new Schema(
         name: { type: String, required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
+        points: { type: Number, required: true },
       },
     ],
     totalPrice: { type: Number, required: true },
+    totalPriceForPartner: { type: Number, required: true },
+    totalPoints: { type: Number, required: true },
     status: {
       type: String,
       enum: ['pending', 'paid', 'shipped', 'delivered', 'cancelled'],
