@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createOrderController,
   createOrderNotAuthController,
+  getUserOrdersController,
 } from '../../controllers/orders/orders.js';
 import { ctrlWrapper } from '../../utils/ctrlWrapper.js';
 import { validateBody } from '../../middlewares/validateBody.js';
@@ -22,5 +23,7 @@ router.post(
   validateBody(createOrderSchema),
   ctrlWrapper(createOrderNotAuthController),
 );
+
+router.get('/user-orders', authenticate, ctrlWrapper(getUserOrdersController));
 
 export default router;

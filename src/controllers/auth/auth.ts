@@ -12,12 +12,10 @@ import { getCurrentUser } from '../../services/auth/auth.js';
 
 const setupSession = (res: Response, session: ISession) => {
   const cookieOptions = getCookieOptions();
-
   res.cookie('refreshToken', session.refreshToken, {
     ...cookieOptions,
     expires: new Date(Date.now() + SEVEN_DAYS),
   });
-
   res.cookie('sessionId', session._id.toString(), {
     ...cookieOptions,
     expires: new Date(Date.now() + SEVEN_DAYS),
@@ -27,9 +25,7 @@ const setupSession = (res: Response, session: ISession) => {
 export const registerUserController = async (req: Request, res: Response) => {
   const user = await registerUser(req.body);
   const session = await loginUser(req.body);
-
   setupSession(res, session);
-
   res.status(201).json({
     status: 201,
     message: 'User registered and logged in successfully',

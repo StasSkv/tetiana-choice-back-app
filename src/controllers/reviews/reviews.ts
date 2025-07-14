@@ -17,11 +17,15 @@ export const getAllReviewsController = async (
 };
 
 export const getReviewsByUserController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const reviews = await getReviewsByUser(req.params.userId);
+  const userId = req.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const reviews = await getReviewsByUser(userId.toString());
   res.status(200).json(reviews);
 };
 

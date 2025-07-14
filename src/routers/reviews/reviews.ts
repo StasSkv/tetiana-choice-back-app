@@ -13,7 +13,7 @@ import { authenticate } from '../../middlewares/authenticate.js';
 const router = express.Router();
 
 router.get('/', ctrlWrapper(getAllReviewsController));
-router.get('/user/:userId', ctrlWrapper(getReviewsByUserController));
+router.get('/user-reviews', authenticate, ctrlWrapper(getReviewsByUserController));
 router.get('/product/:productId', ctrlWrapper(getReviewsByProductController));
 router.post(
   '/',

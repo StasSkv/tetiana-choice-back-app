@@ -15,10 +15,8 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
     paymentStatus,
     recipient,
   } = orderData;
-
   const productIds = products.map((p: any) => p.productId);
   const dbProducts = await ProductModel.find({ _id: { $in: productIds } });
-
   const orderProducts = products.map((item: any) => {
     const matched = dbProducts.find(
       (p: any) => p._id.toString() === item.productId,
@@ -57,4 +55,9 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
   });
 
   return order;
+};
+
+export const getUserOrdersService = async (userId: string) => {
+  const orders = await OrderModel.find({ userId }).sort({ createdAt: -1 });
+  return orders;
 };

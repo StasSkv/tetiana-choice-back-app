@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import { createOrderService } from '../../services/orders/orders.js';
+import {
+  createOrderService,
+  getUserOrdersService,
+} from '../../services/orders/orders.js';
 import { telegramBot } from '../../telegramBot/telegramBot.js';
 import { getEnvVar } from '../../utils/getEnvVar.js';
 import { templateOrderMessage } from '../../telegramBot/templateOrderMessage.js';
@@ -39,5 +42,17 @@ export const createOrderNotAuthController = async (
   res.status(201).json({
     status: 'success',
     data: order,
+  });
+};
+
+export const getUserOrdersController = async (
+  req: CustomRequest,
+  res: Response,
+) => {
+  const userId = req.user?._id as string;
+  const orders = await getUserOrdersService(userId);
+  res.status(200).json({
+    status: 'success',
+    data: orders,
   });
 };

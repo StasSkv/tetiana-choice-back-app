@@ -4,8 +4,18 @@ export interface IUser extends Document {
   name: string;
   phone: string;
   password: string;
-  email?: string;
-  age?: number;
+  email: string;
+  dateOfBirth: string;
+  deliveryOption: {
+    method: string;
+    city: string;
+    department: string;
+  };
+  paymentOption: {
+    method: string;
+    cardNumber: string;
+    cardExpiration: string;
+  };
   otp?: string;
   otpExpiresAt?: Date;
   role: 'admin' | 'user';
@@ -19,8 +29,24 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    email: { type: String, unique: true, sparse: true },
-    age: { type: Number },
+    email: { type: String },
+    dateOfBirth: { type: String, default: '' },
+    deliveryOption: {
+      method: {
+        type: String,
+        enum: ['Nova_Poshta', 'Ukrposhta', 'Self', ''],
+        default: '',
+      },
+      city: { type: String, default: '' },
+      department: { type: String, default: '' },
+    },
+    paymentOption: {
+      method: {
+        type: String,
+        enum: ['card', 'cash', 'overpayment', ''],
+        default: '',
+      },
+    },
     otp: { type: String },
     otpExpiresAt: { type: Date },
     role: {
