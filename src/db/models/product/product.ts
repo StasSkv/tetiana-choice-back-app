@@ -43,6 +43,7 @@ const ProductSchema = new Schema<ProductDoc>(
     brief: { type: String, required: true },
     volume: { type: String, required: true },
     price: { type: Number, required: true },
+    pricePartner: { type: Number, required: true },
     appointment: { type: String, required: true },
     quantity: { type: Number, required: true },
     rating: { type: [Number], default: [] },

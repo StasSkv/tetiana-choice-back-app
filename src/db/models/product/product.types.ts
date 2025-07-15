@@ -20,6 +20,7 @@ export interface Product {
   brief: string;
   volume: string;
   price: number;
+  pricePartner: number;
   points: number;
   quantity: number;
   rating: number[];

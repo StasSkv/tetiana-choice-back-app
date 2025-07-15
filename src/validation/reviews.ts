@@ -29,4 +29,8 @@ export const createReviewSchema = Joi.object({
     'string.base': 'Comment must be a string',
     'any.required': 'Comment is required',
   }),
+  productName: Joi.string().required().messages({
+    'string.base': 'Product name must be a string',
+    'any.required': 'Product name is required',
+  }),
 });

@@ -22,6 +22,7 @@ export const createReviewProduct = async (review: {
   productId: string;
   rating: number;
   comment: string;
+  productName: string;
 }) => {
   const newReview = await ReviewsModel.create(review);
   return newReview;
