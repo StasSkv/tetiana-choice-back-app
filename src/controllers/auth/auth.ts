@@ -25,25 +25,26 @@ const setupSession = (res: Response, session: ISession) => {
 export const registerUserController = async (req: Request, res: Response) => {
   const user = await registerUser(req.body);
   const session = await loginUser(req.body);
-  setupSession(res, session);
+  setupSession(res, session.session);
   res.status(201).json({
     status: 201,
     message: 'User registered and logged in successfully',
     data: {
       user,
-      accessToken: session.accessToken,
+      accessToken: session.session.accessToken,
     },
   });
 };
 
 export const loginUserController = async (req: Request, res: Response) => {
   const session = await loginUser(req.body);
-  setupSession(res, session);
+  setupSession(res, session.session);
   res.status(200).json({
     status: 200,
     message: 'User logged in successfully',
     data: {
-      accessToken: session.accessToken,
+      user: session.user,
+      accessToken: session.session.accessToken,
     },
   });
 };
