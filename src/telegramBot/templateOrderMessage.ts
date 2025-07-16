@@ -10,7 +10,7 @@ const templateString = `
 
 🛒 *Товари:*
 {{#each products}}
-  {{increment @index}}. {{this.name}} — {{this.quantity}} шт. × {{this.price}} грн ({{this.points}} балів)
+  {{increment @index}}. {{this.name}} — {{this.quantity}} шт. × {{this.price}} грн ({{this.points}} балів, ціна партнера: {{this.pricePartner}} грн)
 {{/each}}
 
 💰 *Підсумки:*

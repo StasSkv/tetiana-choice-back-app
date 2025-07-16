@@ -28,7 +28,7 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
       productId: matched._id,
       name: matched.name,
       price: matched.price,
-      priceForPartner: Math.round(matched.price * 0.7),
+      pricePartner: matched.pricePartner,
       points: matched.points,
       quantity: item.quantity,
     };
@@ -43,7 +43,7 @@ export const createOrderService = async (orderData: CreateOrderPayload) => {
   );
 
   const totalPriceForPartner = orderProducts.reduce(
-    (acc: number, item: any) => acc + item.priceForPartner * item.quantity,
+    (acc: number, item: any) => acc + item.pricePartner * item.quantity,
     0,
   );
 

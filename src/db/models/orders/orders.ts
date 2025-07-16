@@ -18,6 +18,7 @@ const OrderSchema = new Schema(
         name: { type: String, required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
+        pricePartner: { type: Number, required: true },
         points: { type: Number, required: true },
       },
     ],
