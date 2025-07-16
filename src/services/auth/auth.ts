@@ -17,6 +17,18 @@ interface LoginUserPayload {
   password: string;
 }
 
+interface UpdateUserPayload {
+  name: string;
+  phone: string;
+  email: string;
+  dateOfBirth: string;
+  deliveryOption: {
+    city: string;
+    method: string;
+    department: string;
+  };
+}
+
 export const registerUser = async (payload: RegisterUserPayload) => {
   const user = await UserModel.findOne({ phone: payload.phone });
   if (user) {
@@ -113,6 +125,25 @@ export const getCurrentUser = async (
     throw createHttpError(401, 'Access token expired');
   }
   const user = await UserModel.findById(session.userId).select('-password');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  return user;
+};
+
+
+export const updateUser = async (sessionId: string, accessToken: string, payload: UpdateUserPayload) => {
+  const session = await SessionModel.findOne({
+    _id: new Types.ObjectId(sessionId),
+    accessToken,
+  });
+  if (!session) {
+    throw createHttpError(401, 'Session not found or invalid');
+  }
+  const user = await UserModel.findByIdAndUpdate(session.userId, payload, {
+    new: true,
+    select: '-password',
+  }).lean();
   if (!user) {
     throw createHttpError(404, 'User not found');
   }

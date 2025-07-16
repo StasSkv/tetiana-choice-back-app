@@ -4,6 +4,7 @@ import {
   logoutUser,
   refreshUsersSession,
   registerUser,
+  updateUser,
 } from '../../services/auth/auth.js';
 import { SEVEN_DAYS } from '../../constants/index.js';
 import { ISession } from '../../db/models/session/session.js';
@@ -92,5 +93,23 @@ export const getCurrentUserController = async (req: Request, res: Response) => {
     status: 200,
     message: 'Successfully got current user!',
     data: { user },
+  });
+};
+
+
+export const updateUserController = async (req: Request, res: Response) => {
+    const sessionId = req.cookies.sessionId;
+    const accessToken = req.headers.authorization?.replace('Bearer ', '');
+    if (!sessionId || !accessToken) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized: Missing sessionId or accessToken',
+      });
+    }
+  const user = await updateUser(sessionId, accessToken, req.body);
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully updated user!',
+    data: user,
   });
 };

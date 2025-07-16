@@ -34,7 +34,7 @@ const userSchema = new Schema<IUser>(
     deliveryOption: {
       method: {
         type: String,
-        enum: ['Nova_Poshta', 'Ukrposhta', 'Self', ''],
+        enum: ['nova_poshta', 'ukrposhta', 'self_pickup', ''],
         default: '',
       },
       city: { type: String, default: '' },
